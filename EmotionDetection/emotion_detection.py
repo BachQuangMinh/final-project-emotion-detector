@@ -11,13 +11,15 @@ def emotion_detector(text_to_analyze):
     
     response = requests.post(url, headers=headers, json=input_json)
 
-    # if response.status_code == 200:
-    #     formatted_response = response.json()
-    #     label = formatted_response['documentSentiment']['label']
-    #     score = formatted_response['documentSentiment']['score']
+    if response.status_code == 200:
+        formatted_response = response.json()
+        emotion_dict = formatted_response['emotionPredictions'][0]['emotion']
+        max_emotion = max(emotion_dict.items(), key=lambda item: item[1])
+        label = max_emotion[0]
+        score = max_emotion[1]
+        emotion_dict['dominant_emotion'] = label
 
-    # if response.status_code == 500:
-    #     label = None
-    #     score = None
+    if response.status_code == 500:
+        emotion_dict = None
     
-    # return {'label': label, 'score': score}
+    return emotion_dict
